@@ -10,8 +10,8 @@ class EmbeddingLayer(nn.Module):
         """
         Layer gets batch of sequences and returns batch of embedded sequences.
 
-        :param seqs: input sequences, shape (batch_size, max_seq_len)
-        :return: embedded sequences, shape (batch_size, max_seq_len, embedding_dim)
+        :param seqs: input sequences, shape (seq_len, batch_size)
+        :return: embedded sequences, shape (seq_len, batch_size, embedding_dim)
         """
 
         return self.embedding(seqs)

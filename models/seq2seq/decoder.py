@@ -7,14 +7,10 @@ from torch.nn.utils.rnn import pack_padded_sequence
 class Decoder(nn.Module):
     def __init__(self, input_size: int, hidden_size: int, vocab_size: int, dropout: float = 0.5):
         super().__init__()
-
         self.vocab_size = vocab_size
-        self.decoder = nn.LSTM(input_size=input_size,
-                               hidden_size=hidden_size,
-                               batch_first=False,
-                               dropout=dropout)
-
+        self.decoder = nn.LSTM(input_size=input_size, hidden_size=hidden_size, dropout=dropout)
         self.linear = nn.Linear(hidden_size, vocab_size)
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, seqs: Tensor, h_n: Tensor, c_n: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
         """
@@ -31,6 +27,7 @@ class Decoder(nn.Module):
         cell states, shape (batch_size, hidden_size)
         """
 
+        # seqs = self.dropout(seqs)  # -> (batch_size input_size)
         seqs = seqs.unsqueeze(0)  # -> (1, batch_size, input_size)
         h_n = h_n.unsqueeze(0)  # -> (1, batch_size, hidden_size)
         c_n = c_n.unsqueeze(0)  # -> (1, batch_size, hidden_size)
