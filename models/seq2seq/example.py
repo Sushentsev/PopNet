@@ -53,7 +53,7 @@ def main():
     outputs = model(input_seqs, input_lens, target_seqs, teacher_forcing_ratio=0.3)
 
     print(f"Device: {DEVICE}")
-    print(f"Expected outputs shape: (target_len={TARGET_SEQ_LEN}, batch_size={BATCH_SIZE}, vocab_size={VOCAB_SIZE})")
+    print(f"Expected outputs shape: ({TARGET_SEQ_LEN}, {BATCH_SIZE}, {VOCAB_SIZE})")
     print(f"Outputs shape: {tuple(outputs.shape)}")
 
 
