@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 host = "https://text-you.ru/"
 path = "rus_text_pesni/"
+save_path = "/home/denis/Study/PopNet/data/examples/"
 
 
 def save_lyrics(path: str, author_lyrics_name: str, lyrics: List[str]):
@@ -62,7 +63,7 @@ def collect_lyrics(save_path: str, pages: int = None):
 
 
 def main():
-    collect_lyrics("/home/denis/Study/PopNet/data/examples/", pages=1)
+    collect_lyrics(save_path, pages=1)
 
 
 if __name__ == '__main__':
