@@ -5,7 +5,7 @@ Generating pop lyrics from song titles
 
 Data was collected from [Genius](https://genius.com/). Genius is one of the largest song lyrics databases. Right now there are 4638 songs collected.
 We predominantly chose pop and rock artists, because they have similar song structures, so algorithms can learn better.
-To collect lyrics we used [lyricsgenius](https://github.com/johnwmillr/lyricsgenius) package
+To collect lyrics we used [lyricsgenius](https://github.com/johnwmillr/lyricsgenius) package.
 
 Data saved in `/data/` folder. 
 ```
@@ -26,6 +26,8 @@ To train model we used folowing `<tags>`:
 `<songname>` - song name
 `<songlyrics>` - the beginning of the lyrics
 `<endsong>` - end of the song
+
+For pretraining you should run script `train/preprocess/gpt_preprocess.py`
 
 To run model you should create `train.txt` and `valid.txt` files with songs with tags.
 To train model you should run folowing script:
@@ -75,3 +77,8 @@ New world hit #1 example:
 ```
 
 ![Home](https://previews.123rf.com/images/fizkes/fizkes1902/fizkes190200753/116534838-desperate-upset-teen-girl-victim-crying-alone-at-home-sad-abused-young-woman-in-tears-feeling-depres.jpg)
+
+# Seq2Seq model
+
+Seq2Seq model you can find in `train/` folder.
+Data Preprocessing is performed using the `train/preprocess/seq2seq_preprocess.py` file.
