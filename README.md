@@ -50,8 +50,6 @@ You can find an example of using the model in `/examples/` folder.
 
 Lyrics example:
 
-![Home](https://previews.123rf.com/images/fizkes/fizkes1902/fizkes190200753/116534838-desperate-upset-teen-girl-victim-crying-alone-at-home-sad-abused-young-woman-in-tears-feeling-depres.jpg)
-
 ### **Дом (Home)**
 ```
 Я хочу тебе рассказать, 
@@ -75,3 +73,5 @@ Lyrics example:
 Мой любимый человек теперь твой самый лучший враг номер один из тысячи людей,
 Которым можно доверять по жизни....
 ```
+
+![Home](https://previews.123rf.com/images/fizkes/fizkes1902/fizkes190200753/116534838-desperate-upset-teen-girl-victim-crying-alone-at-home-sad-abused-young-woman-in-tears-feeling-depres.jpg)
