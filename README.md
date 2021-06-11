@@ -48,7 +48,7 @@ To train model you should run folowing script:
 
 You can find an example of using the model in `/examples/` folder.
 
-Lyrics example:
+New world hit #1 example:
 
 ### **Дом (Home)**
 ```
