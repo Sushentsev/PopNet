@@ -1,6 +1,8 @@
 # PopNet
 Generating pop lyrics from song titles
 
+![meme](https://sun9-14.userapi.com/impg/P2S1_LNWGrrg96A6fDjn3_asGxfbaxJYFFyc3w/fG-cePI5Mlo.jpg?size=900x600&quality=96&sign=ab5259d6d9fbf8aceb601e0f69b6ac2f&type=album)
+
 # Data Collection
 
 Data was collected from [Genius](https://genius.com/). Genius is one of the largest song lyrics databases. Right now there are 4638 songs collected.
@@ -82,3 +84,6 @@ New world hit #1 example:
 
 Seq2Seq model you can find in `train/` folder.
 Data Preprocessing is performed using the `train/preprocess/seq2seq_preprocess.py` file.
+
+As a baseline, we took a seq2seq model based on the encoder-decoder architecture.
+Encoder module is bidirectional, decoder is unidirectional and supports teacher forcing.
