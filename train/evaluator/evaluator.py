@@ -10,5 +10,11 @@ class Evaluator:
         self.device = device
 
     def evaluate(self, test_loader):
+        """
+        Evaluting model on test data.
+        TODO: think about batch wrapper for different models.
+        :param test_loader:
+        :return:
+        """
         raise NotImplementedError
 

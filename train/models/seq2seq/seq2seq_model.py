@@ -3,7 +3,6 @@ import random
 from torch import nn, Tensor
 
 
-# Adapted from: https://github.com/bentrevett/pytorch-seq2seq
 class Seq2Seq(nn.Module):
     def __init__(self, embedding_layer: nn.Module, encoder: nn.Module, decoder: nn.Module, device):
         super().__init__()
