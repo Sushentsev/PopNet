@@ -49,6 +49,7 @@ To train model you should run folowing script:
 You can find an example of using the model in `/examples/` folder.
 
 Lyrics example:
+
 **Дом (Home)**
 ![Home](https://previews.123rf.com/images/fizkes/fizkes1902/fizkes190200753/116534838-desperate-upset-teen-girl-victim-crying-alone-at-home-sad-abused-young-woman-in-tears-feeling-depres.jpg)
 ```
