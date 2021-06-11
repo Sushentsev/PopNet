@@ -14,6 +14,6 @@ data
 |   genius_collection.py    # script for parsing songs from genius
 |   gensongs.zip            # zip file with 4638 songs parsed
 |   lyrics_collection.py    # script for parsing songs from random sites
-├───examples                # songs parsed from random sites
-├───genius examples         # songs parsed from genius
+├─── examples                # songs parsed from random sites
+├─── genius examples         # songs parsed from genius
 ```
