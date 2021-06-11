@@ -1,10 +1,8 @@
-import torch
-from torch import nn
+from train.loss.base import Loss
 
 
 class Evaluator:
-    def __init__(self, model: nn.Module, loss: nn.Module, batch_size: int, device):
-        self.model = model
+    def __init__(self, loss: Loss, batch_size: int, device):
         self.loss = loss
         self.batch_size = batch_size
         self.device = device
