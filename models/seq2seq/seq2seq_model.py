@@ -3,8 +3,7 @@ import random
 from torch import nn, Tensor
 
 
-# https://github.com/bentrevett/pytorch-seq2seq
-# https://github.com/bentrevett/pytorch-seq2seq/blob/master/1%20-%20Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.ipynb
+# Adapted from: https://github.com/bentrevett/pytorch-seq2seq
 class Seq2Seq(nn.Module):
     def __init__(self, embedding_layer: nn.Module, encoder: nn.Module, decoder: nn.Module, device):
         super().__init__()
@@ -13,7 +12,11 @@ class Seq2Seq(nn.Module):
         self.decoder = decoder
         self.device = device
 
-    def forward(self, source: Tensor, source_lens: Tensor, target: Tensor, teacher_forcing_ratio: float = 0.5) -> Tensor:
+    def forward(self,
+                source: Tensor,
+                source_lens: Tensor,
+                target: Tensor,
+                teacher_forcing_ratio: float = 0.5) -> Tensor:
         """
 
         :param source: input sequences, shape (seq_len, batch_size)

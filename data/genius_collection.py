@@ -5,25 +5,7 @@ import json
 
 from tqdm import tqdm
 
-save_path = "./genius_examples"
-
-# artist_names = ["Баста (Basta)", "Руки Вверх (Ruki Vverh)", "Артур Пирожков (Arthur Pirozhkov)",
-#                 "Макс Корж (Max Korzh)", "Тима Белорусских (Tima Belorusskih)",
-#                 "PHARAOH", "Loboda", "Ёлка (Yolka)", "Гражданская оборона (Civil Defense)",
-#                 "Noize MC", "Монеточка (Monetochka)", "Кино (Kino)", "MiyaGi & Эндшпиль",
-#                 "MORGENSHTERN", "Элджей (Eldzhey)", "Feduk", "MiyaGi", "NILETTO",
-#                 "SONIC DEATH", "Арсений Креститель (Arseniy Krestitel’)",
-#                 "Увула (Uvula)", "Padla Bear Outfit", "Самое большое простое число (SBPCH)",
-#                 "источник (istochnik)", "Botanichesky sad", "Oxxxymiron",
-#                 "Электрофорез (Electroforez)", "Буерак (Buerak)",
-#                 "Пасош (Pasosh)", "Спасибо (Spasibo)", "прыгай киска (kiska)",
-#                 "Kedr Livanskiy", "Забыл повзрослеть (Zabyl Povzroslet)",
-#                 "Ушко (Ushko)", "Би-2 (Bi-2)", "Аквариум (Aquarium)", "Аффинаж (Affinage Band)",
-#                 "Дайте танк (!) [Daite Tank (!)]", "Комсомольск (Komsomolsk)",
-#                 "Молчат Дома (Molchat Doma)", "Клава Кока (Klava Koka)", 
-#                 "имя твоей бывшей (imja tvoej byvshej)", "МЭЙБИ БЭЙБИ (MAYBE BABY)",
-#                 "дора (mentaldora)"
-# ]
+save_path = "./all_lyrics"
 
 
 def save_lyrics(path: str, author_lyrics_name: str, lyrics: str):
@@ -48,8 +30,8 @@ def collect_lyrics(CONFIG, save_path: str):
         artist = genius.search_artist(artist_name, max_songs=100, sort="popularity")
 
         if artist is not None:
-            for song in tqdm(artist.songs):
-                save_lyrics(save_path, artist_name + " - " + song.title, song.lyrics)
+            for song in artist.songs:
+                save_lyrics(save_path, artist.name + " - " + song.title, song.lyrics)
 
 
 def main():
