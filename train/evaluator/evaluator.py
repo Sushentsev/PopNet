@@ -9,6 +9,6 @@ class Evaluator:
         self.batch_size = batch_size
         self.device = device
 
-    def evaluate(self, test_loader) -> float:
-        pass
+    def evaluate(self, test_loader):
+        raise NotImplementedError
 

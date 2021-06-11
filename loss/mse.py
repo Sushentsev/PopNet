@@ -1,2 +1,0 @@
-class MSE(Loss):
-    pass

@@ -3,10 +3,10 @@ from typing import Tuple
 import torch
 from torch import Tensor, nn
 
-from models.seq2seq.decoder import Decoder
-from models.seq2seq.embedding_layer import EmbeddingLayer
-from models.seq2seq.encoder import Encoder
-from models.seq2seq.seq2seq_model import Seq2Seq
+from train.models.seq2seq.decoder import Decoder
+from train.models.seq2seq.embedding_layer import EmbeddingLayer
+from train.models.seq2seq.encoder import Encoder
+from train.models.seq2seq.seq2seq_model import Seq2Seq
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 BATCH_SIZE = 5
