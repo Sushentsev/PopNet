@@ -20,12 +20,12 @@ class GPTInference:
 
     def predict(self, song_name: str) -> str:
         text = f"<startsong>\n<songname> {song_name}\n<songlyrics>\n"
-        inpt = tok.encode(text, return_tensors="pt")
+        inpt = self.__tok.encode(text, return_tensors="pt")
 
-        out = model.generate(inpt.to(self.__device), max_length=500, repetition_penalty=5.0,
+        out = self.__model.generate(inpt.to(self.__device), max_length=500, repetition_penalty=5.0,
                              do_sample=True, top_k=5, top_p=0.95, temperature=1)
 
-        return tok.decode(out[0])
+        return self.__tok.decode(out[0])
 
 
 if __name__ == '__main__':
