@@ -1,4 +1,5 @@
 import os
+import argparse
 
 DATA_PATH = 'data/gensongs/'
 SAVE_PATH = 'train/preprocess/gpt_data/'
@@ -38,5 +39,10 @@ class GPTPreprocess:
 
 
 if __name__ == '__main__':
-    preprocesser = GPTPreprocess(DATA_PATH, SAVE_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("data_path", type=str, help="path to folder with songs")
+    parser.add_argument("save_path", type=str, help="where to save data files")
+    args = parser.parse_args()
+
+    preprocesser = GPTPreprocess(args.data_path, args.save_path)
     preprocesser.preprocess()
