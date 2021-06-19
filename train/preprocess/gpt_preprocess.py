@@ -10,7 +10,7 @@ class GPTPreprocess:
         self.__test_size = test_size
         self.__save_path = save_path
 
-    def preprocess(self):
+    def preprocess(self) -> None:
         files = os.listdir(self.__path)
         train_size = 1 - self.__test_size
         train_filenames, valid_filenames = files[:int(len(files) * train_size)], files[int(len(files) * train_size):]
@@ -28,7 +28,7 @@ class GPTPreprocess:
                 for file, name in zip(file_paths, names):
                     with open(file, 'r', encoding='utf8', errors='ignore') as f:
                         current_file.write('<startsong>\n')
-                        current_file.write('<songname>' + name + '\n')
+                        current_file.write('<songname> ' + name + '\n')
                         current_file.write('<songlyrics>\n')
 
                         for line in f:
