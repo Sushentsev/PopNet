@@ -35,5 +35,5 @@ if __name__ == '__main__':
     parser.add_argument("--device", type=str, help="device - cuda / cpu", default=DEVICE)
     args = parser.parse_args()
 
-    inferencer = (args.model_path, args.device)
+    inferencer = GPTInference(args.model_path, args.device)
     print(inferencer.predict(args.song_name))
