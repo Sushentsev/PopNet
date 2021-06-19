@@ -28,5 +28,11 @@ class GPTInference:
 
 
 if __name__ == '__main__':
-    inferencer = (MODEL_PATH, DEVICE)
-    print(inferencer.predict('Дом (Home)'))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--song_name", type=str, help="name of the song", default='Дом (Home)')
+    parser.add_argument("--model_path", type=str, help="path to model", default=MODEL_PATH)
+    parser.add_argument("--device", type=str, help="device - cuda / cpu", default=DEVICE)
+    args = parser.parse_args()
+
+    inferencer = (args.song_name, args.device)
+    print(inferencer.predict(args.song_name))
