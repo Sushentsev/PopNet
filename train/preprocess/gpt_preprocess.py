@@ -6,7 +6,7 @@ SAVE_PATH = 'train/preprocess/gpt_data/'
 
 
 class GPTPreprocess:
-    def __init__(self, path: str = DATA_PATH, save_path: str = SAVE_PATH, test_size: float = 0.2):
+    def __init__(self, path: str, save_path: str, test_size: float = 0.2):
         self.__path = path
         self.__test_size = test_size
         self.__save_path = save_path
@@ -40,8 +40,8 @@ class GPTPreprocess:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str, help="path to folder with songs")
-    parser.add_argument("--save_path", type=str, help="where to save data files")
+    parser.add_argument("--data_path", type=str, help="path to folder with songs", default=DATA_PATH)
+    parser.add_argument("--save_path", type=str, help="where to save data files", default=SAVE_PATH)
     args = parser.parse_args()
 
     preprocesser = GPTPreprocess(args.data_path, args.save_path)
