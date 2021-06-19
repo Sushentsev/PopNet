@@ -1,43 +1,42 @@
 import os
 
-path = 'PopNet/data/gensongs/'
+DATA_PATH = 'data/gensongs/'
+SAVE_PATH = 'train/preprocess/gpt_data/'
 
-files = os.listdir(path)
-train_files, valid_files = files[:int(len(files) * 0.8)], files[int(len(files) * 0.8):]
 
-names = [x.split('-')[1][:-4] for x in train_files]
-files = [os.path.join(path, x) for x in train_files]
+class GPTPreprocess:
+    def __init__(self, path: str, save_path: str, test_size: float = 0.2):
+        self.__path = path
+        self.__test_size = test_size
+        self.__save_path = save_path
 
-train_file = open('train.txt', 'w')
+    def preprocess(self):
+        files = os.listdir(self.__path)
+        train_size = 1 - self.__test_size
+        train_filenames, valid_filenames = files[:int(len(files) * train_size)], files[int(len(files) * train_size):]
 
-for file, name in zip(files, names):
-    f = open(file, "r")
-    train_file.write('<startsong>\n')
-    train_file.write('<songname>' + name + '\n')
-    train_file.write('<songlyrics>\n')
+        train_filepath = os.path.join(self.__save_path, 'train.txt')
+        valid_filepath = os.path.join(self.__save_path, 'valid.txt')
 
-    for line in f:
-        train_file.write(line)
+        for current_filepath, filenames in [(train_filepath, train_filenames),
+                                            (valid_filepath, valid_filenames)]:
+            with open(current_filepath, 'w', encoding='utf8', errors='ignore') as current_file:
+                # 1 : -4 because 1 to remove space and -4 to remove .txt
+                names = [x.split('-')[1][1:-4] for x in filenames]
+                file_paths = [os.path.join(self.__path, x) for x in filenames]
 
-    train_file.write('<endsong>\n')
-    f.close()
+                for file, name in zip(file_paths, names):
+                    with open(file, 'r', encoding='utf8', errors='ignore') as f:
+                        current_file.write('<startsong>\n')
+                        current_file.write('<songname>' + name + '\n')
+                        current_file.write('<songlyrics>\n')
 
-train_file.close()
+                        for line in f:
+                            current_file.write(line)
 
-names = [x.split('-')[1][:-4] for x in valid_files]
-files = [os.path.join(path, x) for x in valid_files]
-valid_file = open('valid.txt', 'w')
+                        current_file.write('<endsong>\n')
 
-for file, name in zip(files, names):
-    f = open(file, "r")
-    valid_file.write('<startsong>\n')
-    valid_file.write('<songname>' + name + '\n')
-    valid_file.write('<songlyrics>\n')
 
-    for line in f:
-        valid_file.write(line)
-
-    valid_file.write('<endsong>\n')
-    f.close()
-
-valid_file.close()
+if __name__ == '__main__':
+    preprocesser = GPTPreprocess(DATA_PATH, SAVE_PATH)
+    preprocesser.preprocess()
