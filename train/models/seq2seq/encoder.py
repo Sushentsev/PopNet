@@ -1,31 +1,51 @@
-from typing import Tuple
+from typing import Tuple, Optional, List
 
 import torch
 from torch import nn, Tensor
 from torch.nn.utils.rnn import pack_padded_sequence
 
+from train.models.seq2seq.embedding_layer import EmbeddingLayer
+
 
 class Encoder(nn.Module):
-    def __init__(self, input_size: int, hidden_size: int, dropout: float = 0.5):
+    """
+    Bidirectional RNN encoder.
+    Final hidden states cell states result from concatenations of
+    hidden states and cell states in each direction.
+    """
+    def __init__(self,
+                 vocab_size: int,
+                 embedding_dim: int,
+                 input_size: int,
+                 hidden_size: int,
+                 device,
+                 input_dropout: float = 0.,
+                 padding_idx: Optional[int] = None,
+                 embedding_weight: Optional[Tensor] = None,
+                 update_embedding: bool = True):
         super().__init__()
-        self.encoder = nn.LSTM(input_size=input_size, hidden_size=hidden_size, bidirectional=True)
-        self.dropout = nn.Dropout(dropout)
+        self.__embedding = EmbeddingLayer(vocab_size, embedding_dim, padding_idx,
+                                          embedding_weight, update_embedding)
+        self.__encoder = nn.LSTM(input_size, hidden_size, bidirectional=True, batch_first=True)
+        self.__input_dropout = nn.Dropout(input_dropout)
+        self.__device = device
 
     def forward(self, seqs: Tensor, lens: Tensor) -> Tuple[Tensor, Tensor]:
         """
-        Encoder in seq2seq architecture.
         Encoder gets batch of embedded sequences
-        and returns batch of last hidden states and batch of last cell states.
+        and returns batch of last hidden states and last cell states.
 
-        :param seqs: embedded sequences, shape (seq_len, batch_size, input_size)
+        :param seqs: embedded sequences, shape (batch_size, seq_len)
         :param lens: sequence lengths, shape (batch_size)
         :return: last hidden states, shape (batch_size, 2 * hidden_size);
         last cell states, shape (batch_size, 2 * hidden_size)
         """
 
-        seqs = self.dropout(seqs)  # -> (batch_size, max_seq_len, input_size)
-        packed = pack_padded_sequence(seqs, lens, enforce_sorted=False)
-        _, (h_n, c_n) = self.encoder(packed)
+        embedded = self.__embedding(seqs)  # -> (batch_size, seq_len, embedding_dim)
+        embedded = self.__input_dropout(embedded)  # -> (batch_size, seq_len, embedding_dim)
+
+        packed = pack_padded_sequence(embedded, lens, enforce_sorted=False, batch_first=True)
+        _, (h_n, c_n) = self.__encoder(packed)
         # h_n.shape = (2, batch_size, hidden_size)
         # c_n.shape = (2, batch_size, hidden_size)
 
@@ -34,4 +54,5 @@ class Encoder(nn.Module):
 
         h_n_cat = torch.cat((h_n_forward, h_n_backward), dim=1)  # -> (batch_size, 2 * hidden_size)
         c_n_cat = torch.cat((c_n_forward, c_n_backward), dim=1)  # -> (batch_size, 2 * hidden_size)
+
         return h_n_cat, c_n_cat

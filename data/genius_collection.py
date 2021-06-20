@@ -31,7 +31,7 @@ def collect_lyrics(CONFIG, save_path: str):
 
         if artist is not None:
             for song in artist.songs:
-                save_lyrics(save_path, artist.name + " - " + song.title, song.lyrics)
+                save_lyrics(save_path, artist.__name + " - " + song.title, song.lyrics)
 
 
 def main():

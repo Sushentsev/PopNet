@@ -3,3 +3,6 @@ tqdm>=4.53.0
 requests>=2.22.0
 beautifulsoup4>=4.9.3
 torch>=1.7.1
+numpy>=1.19.4
+spacy>=3.0.6
+torchtext>=0.10.0
