@@ -9,3 +9,6 @@ class Seq2SeqDataset(Dataset):
 
     def __getitem__(self, item) -> Tuple[List[int], List[int]]:
         return self.__src[item], self.__trg[item]
+
+    def __len__(self) -> int:
+        return len(self.__src)

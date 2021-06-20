@@ -16,7 +16,6 @@ class Encoder(nn.Module):
     def __init__(self,
                  vocab_size: int,
                  embedding_dim: int,
-                 input_size: int,
                  hidden_size: int,
                  device,
                  input_dropout: float = 0.,
@@ -26,7 +25,7 @@ class Encoder(nn.Module):
         super().__init__()
         self.__embedding = EmbeddingLayer(vocab_size, embedding_dim, padding_idx,
                                           embedding_weight, update_embedding)
-        self.__encoder = nn.LSTM(input_size, hidden_size, bidirectional=True, batch_first=True)
+        self.__encoder = nn.LSTM(embedding_dim, hidden_size, bidirectional=True, batch_first=True)
         self.__input_dropout = nn.Dropout(input_dropout)
         self.__device = device
 

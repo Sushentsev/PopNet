@@ -23,7 +23,7 @@ class Seq2Seq(nn.Module):
         :param trg: shape (batch_size, seq_len)
         :param trg_lens: shape (batch_size)
         :param teacher_forcing_ratio: float
-        :return: logits, shape (max_len, batch_size, vocab_size)
+        :return: logits, shape (trg_len, batch_size, vocab_size)
         """
         h_n, c_n = self.__encoder(src, src_lens)
         outputs = self.__decoder(h_n, c_n, trg, trg_lens, teacher_forcing_ratio)

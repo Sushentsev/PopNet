@@ -1,42 +1,23 @@
 import random
 from logging import getLogger
-from typing import Optional, Any, List, Tuple
+from typing import Optional
 
 import numpy as np
 import torch
 from torch import Tensor, optim
-from torch import nn
-from torch.nn.utils.rnn import pad_sequence
 from torch.optim import Optimizer
-from torchtext.legacy.data import BucketIterator
-from torch.utils.data import DataLoader
 
 from train.dataset.seq2seq_dataset import Seq2SeqDataset
 from train.evaluator.evaluator import Evaluator
 from train.loss.base import Loss
+from train.models.seq2seq.seq2seq_model import Seq2Seq
+from train.trainer.dataloaders import get_dataloader
 
 
 def set_seed(seed: int):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-
-
-def _collate_fn(batch: List[Tuple[List[int], List[int]]]) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-    src_tensors = [torch.LongTensor(src) for src, _ in batch]
-    trg_tensors = [torch.LongTensor(trg) for trg, _ in batch]
-
-    src_lens = torch.LongTensor([len(src) for src in src_tensors])
-    trg_lens = torch.LongTensor([len(trg) for trg in trg_tensors])
-
-    src_padded = pad_sequence(src_tensors, batch_first=True)
-    trg_padded = pad_sequence(trg_tensors, batch_first=True)
-
-    return src_padded, src_lens, trg_padded, trg_lens
-
-
-def get_dataloader(dataset: Seq2SeqDataset, batch_size: int, shuffle: bool) -> DataLoader:
-    return DataLoader(dataset, batch_size, shuffle, collate_fn=_collate_fn)
 
 
 class Seq2SeqTrainer:
@@ -53,52 +34,58 @@ class Seq2SeqTrainer:
     def __train_batch(self,
                       src: Tensor, src_lens: Tensor,
                       trg: Tensor, trg_lens: Tensor,
-                      model: nn.Module, teacher_forcing_ratio: float):
-        out = None # self.model()
+                      model: Seq2Seq, teacher_forcing_ratio: float):
+        logits = model.forward(src, src_lens, trg, trg_lens, teacher_forcing_ratio)
+        # logits.shape = (seq_len, batch_size, vocab_size)
 
         self.__loss.reset()
+        expected = trg.permute(1, 0)[1:].contiguous().view(-1)
+        actual = logits[1:trg.shape[1]].view(-1, logits.shape[2])
 
+        self.__loss.eval_batch(actual, expected)
         model.zero_grad()
         self.__loss.backward()
         self.__optimizer.step()
         return self.__loss.get_loss()
 
     def __train_epochs(self,
-                       model: nn.Module,
+                       model: Seq2Seq,
                        train_data: Seq2SeqDataset,
                        n_epochs: int,
                        dev_data: Optional[Seq2SeqDataset] = None,
                        teacher_forcing_ratio: float = 0.):
 
         dataloader = get_dataloader(train_data, self.__batch_size, shuffle=True)
-
-        steps_per_epoch = len(dataloader)
-        total_steps = steps_per_epoch * n_epochs
-        current_step = 0
+        total_steps = 0
 
         for epoch in range(1, n_epochs + 1):
-            epoch_total_loss = 0.
-            self.__logger.info(f"Epoch: {epoch}, step: {current_step}")
+            self.__logger.warning(f"Epoch: {epoch}, steps: {total_steps}")
             model.train()
 
+            epoch_total_loss = 0.
+            epoch_steps = 0
             for i, batch in enumerate(dataloader):
-                current_step += 1
+                total_steps += 1
                 src, src_lens, trg, trg_lens = [tensor.to(self.__device) for tensor in batch]
 
                 loss = self.__train_batch(src, src_lens, trg, trg_lens, model, teacher_forcing_ratio)
+
+                epoch_steps += 1
                 epoch_total_loss += loss
 
-            epoch_average_loss = epoch_total_loss / steps_per_epoch
-            self.__logger.info(f"Finished epoch {epoch} with train average loss {round(epoch_average_loss, 4)}")
+            epoch_average_loss = epoch_total_loss / epoch_steps
+            self.__logger.warning(f"Finished epoch {epoch} with train average loss {round(epoch_average_loss, 4)}")
 
             if dev_data is not None:
-                raise NotImplementedError
+                dev_loss = self.__evaluator.evaluate(model, dev_data)
+                self.__logger.warning(f"Validation average loss: {round(dev_loss, 4)}")
+                model.train()
 
     def train(self,
-              model: nn.Module,
-              train_data: Any,
+              model: Seq2Seq,
+              train_data: Seq2SeqDataset,
               n_epochs: int,
-              dev_data: Optional[Any] = None,
+              dev_data: Optional[Seq2SeqDataset] = None,
               optimizer: Optional[Optimizer] = None,
               teacher_forcing_ratio: float = 0.):
 
@@ -106,6 +93,8 @@ class Seq2SeqTrainer:
         if optimizer is None:
             optimizer = optim.Adam(model.parameters())
         self.__optimizer = optimizer
-        self.__logger.info("Starting training...")
+        self.__logger.warning("Starting training.")
 
         self.__train_epochs(model, train_data, n_epochs, dev_data, teacher_forcing_ratio)
+
+        self.__logger.warning("Ending training.")

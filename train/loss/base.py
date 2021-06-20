@@ -6,15 +6,15 @@ from torch import nn
 
 class Loss(ABC):
     def __init__(self, name: str, criterion: nn.Module):
-        self.__name: str = name
-        self.__criterion: nn.Module = criterion
+        self._name: str = name
+        self._criterion: nn.Module = criterion
 
-        self.__acc_loss: Union[Tensor, float] = 0.
-        self.__norm_term: float = 0.
+        self._acc_loss: Union[Tensor, float] = 0.
+        self._norm_term: float = 0.
 
     def reset(self):
-        self.__acc_loss = 0.
-        self.__norm_term = 0.
+        self._acc_loss = 0.
+        self._norm_term = 0.
 
     @abstractmethod
     def get_loss(self):
@@ -25,6 +25,6 @@ class Loss(ABC):
         raise NotImplementedError
 
     def backward(self):
-        if isinstance(self.__acc_loss, float):
+        if isinstance(self._acc_loss, float):
             raise ValueError("No loss to back propagate.")
-        self.__acc_loss.backward()
+        self._acc_loss.backward()
