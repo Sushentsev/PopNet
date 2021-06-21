@@ -23,7 +23,7 @@ class GPTInference:
         inpt = self.__tok.encode(text, return_tensors="pt")
 
         out = self.__model.generate(inpt.to(self.__device), max_length=500, repetition_penalty=5.0,
-                             do_sample=True, top_k=5, top_p=0.95, temperature=1)
+                                    do_sample=True, top_k=5, top_p=0.95, temperature=1)
 
         return self.__tok.decode(out[0])
 
