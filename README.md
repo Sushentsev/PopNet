@@ -36,13 +36,13 @@ To train model you should run folowing script:
 ```
 !export PYTHONPATH=${PYTHONPATH}:/ru-gpts/
 !CUDA_VISIBLE_DEVICES=0 python ru-gpts/pretrain_transformers.py \
-    --output_dir=models/popnet \
+    --output_dir=train/models/gpt \
     --model_type=gpt2 \
     --model_name_or_path=sberbank-ai/rugpt3small_based_on_gpt2 \
     --do_train \
-    --train_data_file=train.txt \
+    --train_data_file=train/preprocess/gpt_data/train.txt \
     --do_eval \
-    --eval_data_file=valid.txt \
+    --eval_data_file=train/preprocess/gpt_data/valid.txt \
     --per_gpu_train_batch_size 1 \
     --gradient_accumulation_steps 1 \
     --num_train_epochs 5 \

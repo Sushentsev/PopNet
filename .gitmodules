@@ -1,0 +1,3 @@
+[submodule "ru-gpts"]
+	path = ru-gpts
+	url = https://github.com/sberbank-ai/ru-gpts
