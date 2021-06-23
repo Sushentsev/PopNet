@@ -2,12 +2,20 @@ import numpy as np
 import torch
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 import argparse
+from omegaconf import OmegaConf
+from argparse import ArgumentParser
+
+CONFIG_PATH = 'train/configs/gpt_config.yaml'
 
 np.random.seed(42)
 torch.manual_seed(42)
 
-MODEL_PATH = 'train/models/gpt'
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+def configure_arg_parser() -> ArgumentParser:
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument("--song_name", type=str, help="name of the song")
+    arg_parser.add_argument("-c", "--config", help="Path to YAML configuration file", type=str, default=CONFIG_PATH)
+    return arg_parser
 
 
 class GPTInference:
@@ -29,11 +37,9 @@ class GPTInference:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--song_name", type=str, help="name of the song", default='Дом (Home)')
-    parser.add_argument("--model_path", type=str, help="path to model", default=MODEL_PATH)
-    parser.add_argument("--device", type=str, help="device - cuda / cpu", default=DEVICE)
-    args = parser.parse_args()
+    __arg_parser = configure_arg_parser()
+    __args = __arg_parser.parse_args()
+    config = OmegaConf.load(__args.config)
 
-    inferencer = GPTInference(args.model_path, args.device)
-    print(inferencer.predict(args.song_name))
+    inferencer = GPTInference(config.model.path, config.device)
+    print(inferencer.predict(__args.song_name))

@@ -1,0 +1,6 @@
+raw_data: 'data/gensongs/'
+train_data: 'train/preprocess/gpt_data/'
+device: 'cuda'
+
+model:
+  path: 'train/models/gpt'

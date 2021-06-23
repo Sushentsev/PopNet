@@ -1,8 +1,15 @@
 import os
 import argparse
+from omegaconf import OmegaConf
+from argparse import ArgumentParser
 
-DATA_PATH = 'data/gensongs/'
-SAVE_PATH = 'train/preprocess/gpt_data/'
+CONFIG_PATH = 'train/configs/gpt_config.yaml'
+
+
+def configure_arg_parser() -> ArgumentParser:
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument("-c", "--config", help="Path to YAML configuration file", type=str, default=CONFIG_PATH)
+    return arg_parser
 
 
 class GPTPreprocess:
@@ -38,11 +45,11 @@ class GPTPreprocess:
                         current_file.write('<endsong>\n')
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str, help="path to folder with songs", default=DATA_PATH)
-    parser.add_argument("--save_path", type=str, help="where to save data files", default=SAVE_PATH)
-    args = parser.parse_args()
+if __name__ == "__main__":
+    __arg_parser = configure_arg_parser()
+    __args = __arg_parser.parse_args()
 
-    preprocesser = GPTPreprocess(args.data_path, args.save_path)
+    config = OmegaConf.load(__args.config)
+
+    preprocesser = GPTPreprocess(config.raw_data, config.train_data)
     preprocesser.preprocess()
