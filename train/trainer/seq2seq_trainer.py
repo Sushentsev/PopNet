@@ -21,17 +21,20 @@ def set_seed(seed: int):
 
 
 class Seq2SeqTrainer:
-    def __init__(self, loss: Loss, batch_size: int, device, random_seed: int = 42):
+    def __init__(self, loss: Loss, batch_size: int, device,
+                 acc_steps: int = 1, random_seed: int = 42):
         self.__loss = loss
         self.__evaluator = Evaluator(loss, batch_size, device)
         self.__batch_size = batch_size
         self.__optimizer = None
         self.__device = device
+
+        self.__acc_steps = acc_steps
         self.__random_seed = random_seed
 
         self.__logger = logging.getLogger(__file__)
 
-    def __train_batch(self,
+    def __train_batch(self, step: int,
                       src: Tensor, src_lens: Tensor,
                       trg: Tensor, trg_lens: Tensor,
                       model: Seq2Seq, teacher_forcing_ratio: float):
@@ -43,11 +46,16 @@ class Seq2SeqTrainer:
 
         expected = trg.permute(1, 0)[1:].contiguous().view(-1)
         actual = logits[1:].view(-1, logits.shape[2])
-        loss.eval_batch(actual, expected)
 
-        model.zero_grad()
+        # Gradients accumulation
+        loss.eval_batch(actual, expected)
+        loss.divide(self.__acc_steps)
         loss.backward()
-        self.__optimizer.step()
+
+        if step % self.__acc_steps == 0:
+            self.__optimizer.step()
+            model.zero_grad()
+
         return loss.get_loss()
 
     def __train_epochs(self,
@@ -58,24 +66,23 @@ class Seq2SeqTrainer:
                        teacher_forcing_ratio: float = 0.):
 
         dataloader = get_dataloader(train_data, self.__batch_size, shuffle=True)
+        step = 0
+        accum_loss = 0.
 
         for epoch in range(1, n_epochs + 1):
             model.train()
 
-            epoch_total_loss = 0.
-            epoch_steps = 0
             for i, batch in enumerate(dataloader):
-                self.__logger.info(f"Epoch {epoch} of {n_epochs}, step {i} of {len(dataloader)}")
+                step += 1
                 src, src_lens, trg, trg_lens = [tensor.to(self.__device) for tensor in batch]
+                self.__logger.info(f"Epoch {epoch} of {n_epochs}, step {step}")
 
-                loss = self.__train_batch(src, src_lens, trg, trg_lens, model, teacher_forcing_ratio)
-                wandb.log({"Train loss": loss, "epoch": epoch})
+                loss = self.__train_batch(step, src, src_lens, trg, trg_lens, model, teacher_forcing_ratio)
+                accum_loss += loss
 
-                epoch_steps += 1
-                epoch_total_loss += loss
-
-            wandb.log({"Train average epoch loss": epoch_total_loss / epoch_steps, "epoch": epoch})
-            self.__logger.info(f"Train loss: {round(epoch_total_loss / epoch_steps, 4)}")
+                if step % self.__acc_steps == 0:
+                    wandb.log({"Train loss": accum_loss, "epoch": epoch})
+                    accum_loss = 0.
 
             if dev_data is not None:
                 dev_loss = self.__evaluator.evaluate(model, dev_data)

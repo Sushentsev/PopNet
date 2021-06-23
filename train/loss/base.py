@@ -29,6 +29,9 @@ class Loss(ABC):
             raise ValueError("No loss to back propagate.")
         self._acc_loss.backward()
 
+    def divide(self, acc_steps: int):
+        self._acc_loss = self._acc_loss / acc_steps
+
     @property
     def name(self) -> str:
         return self._name

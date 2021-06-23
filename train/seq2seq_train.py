@@ -81,10 +81,7 @@ def train(config_path: str):
     train_src, train_trg, dev_src, dev_trg = load_data(config.train_data, config.dev_data)
 
     tokenizer = SpacyRuTokenizer(PAD, SOS, EOS)
-
-    train_src, train_trg, dev_src, dev_trg = encode(tokenizer,
-                                                    train_src, train_trg,
-                                                    dev_src, dev_trg)
+    train_src, train_trg, dev_src, dev_trg = encode(tokenizer, train_src, train_trg, dev_src, dev_trg)
 
     max_song_len = max(max(map(len, train_trg)), max(map(len, dev_trg)))
 
