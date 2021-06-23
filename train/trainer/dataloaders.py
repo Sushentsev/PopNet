@@ -10,7 +10,7 @@ from train.dataset.seq2seq_dataset import Seq2SeqDataset
 
 def _collate_fn(batch: List[Tuple[List[int], List[int]]]) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     src_tensors = [torch.LongTensor(src) for src, _ in batch]
-    trg_tensors = [torch.LongTensor(trg) for trg, _ in batch]
+    trg_tensors = [torch.LongTensor(trg) for _, trg in batch]
 
     src_lens = torch.LongTensor([len(src) for src in src_tensors])
     trg_lens = torch.LongTensor([len(trg) for trg in trg_tensors])

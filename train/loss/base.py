@@ -28,3 +28,7 @@ class Loss(ABC):
         if isinstance(self._acc_loss, float):
             raise ValueError("No loss to back propagate.")
         self._acc_loss.backward()
+
+    @property
+    def name(self) -> str:
+        return self._name

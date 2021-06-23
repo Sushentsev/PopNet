@@ -43,6 +43,6 @@ def make_dataset(files_dir: str, save_dir: str):
             continue
 
         with open(join(files_dir, file_name)) as file:
-            df = df.append([[song_title, file.read()]])
+            df = df.append({"Title": song_title, "Lyrics": file.read()}, ignore_index=True)
 
     df.to_csv(join(save_dir, "dataset.tsv"), sep="\t", index=False)

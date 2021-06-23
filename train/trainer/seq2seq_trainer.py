@@ -1,12 +1,12 @@
 import random
-from logging import getLogger
-from typing import Optional
-
 import numpy as np
 import torch
+import wandb
+import logging
+
+from typing import Optional
 from torch import Tensor, optim
 from torch.optim import Optimizer
-
 from train.dataset.seq2seq_dataset import Seq2SeqDataset
 from train.evaluator.evaluator import Evaluator
 from train.loss.base import Loss
@@ -29,24 +29,26 @@ class Seq2SeqTrainer:
         self.__device = device
         self.__random_seed = random_seed
 
-        self.__logger = getLogger(__name__)
+        self.__logger = logging.getLogger(__file__)
 
     def __train_batch(self,
                       src: Tensor, src_lens: Tensor,
                       trg: Tensor, trg_lens: Tensor,
                       model: Seq2Seq, teacher_forcing_ratio: float):
+        loss = self.__loss
         logits = model.forward(src, src_lens, trg, trg_lens, teacher_forcing_ratio)
         # logits.shape = (seq_len, batch_size, vocab_size)
 
-        self.__loss.reset()
-        expected = trg.permute(1, 0)[1:].contiguous().view(-1)
-        actual = logits[1:trg.shape[1]].view(-1, logits.shape[2])
+        loss.reset()
 
-        self.__loss.eval_batch(actual, expected)
+        expected = trg.permute(1, 0)[1:].contiguous().view(-1)
+        actual = logits[1:].view(-1, logits.shape[2])
+        loss.eval_batch(actual, expected)
+
         model.zero_grad()
-        self.__loss.backward()
+        loss.backward()
         self.__optimizer.step()
-        return self.__loss.get_loss()
+        return loss.get_loss()
 
     def __train_epochs(self,
                        model: Seq2Seq,
@@ -56,29 +58,31 @@ class Seq2SeqTrainer:
                        teacher_forcing_ratio: float = 0.):
 
         dataloader = get_dataloader(train_data, self.__batch_size, shuffle=True)
-        total_steps = 0
 
         for epoch in range(1, n_epochs + 1):
-            self.__logger.warning(f"Epoch: {epoch}, steps: {total_steps}")
             model.train()
 
             epoch_total_loss = 0.
             epoch_steps = 0
             for i, batch in enumerate(dataloader):
-                total_steps += 1
+                self.__logger.info(f"Epoch {epoch} of {n_epochs}, step {i} of {len(dataloader)}")
                 src, src_lens, trg, trg_lens = [tensor.to(self.__device) for tensor in batch]
 
                 loss = self.__train_batch(src, src_lens, trg, trg_lens, model, teacher_forcing_ratio)
+                wandb.log({"Train loss": loss, "epoch": epoch})
 
                 epoch_steps += 1
                 epoch_total_loss += loss
 
-            epoch_average_loss = epoch_total_loss / epoch_steps
-            self.__logger.warning(f"Finished epoch {epoch} with train average loss {round(epoch_average_loss, 4)}")
+            wandb.log({"Train average epoch loss": epoch_total_loss / epoch_steps, "epoch": epoch})
+            self.__logger.info(f"Train loss: {round(epoch_total_loss / epoch_steps, 4)}")
 
             if dev_data is not None:
                 dev_loss = self.__evaluator.evaluate(model, dev_data)
-                self.__logger.warning(f"Validation average loss: {round(dev_loss, 4)}")
+
+                wandb.log({"Dev loss": dev_loss, "epoch": epoch})
+                self.__logger.info(f"Dev loss: {round(dev_loss, 4)}")
+
                 model.train()
 
     def train(self,
@@ -93,8 +97,4 @@ class Seq2SeqTrainer:
         if optimizer is None:
             optimizer = optim.Adam(model.parameters())
         self.__optimizer = optimizer
-        self.__logger.warning("Starting training.")
-
         self.__train_epochs(model, train_data, n_epochs, dev_data, teacher_forcing_ratio)
-
-        self.__logger.warning("Ending training.")

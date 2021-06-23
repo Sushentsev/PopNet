@@ -43,7 +43,7 @@ class Encoder(nn.Module):
         embedded = self.__embedding(seqs)  # -> (batch_size, seq_len, embedding_dim)
         embedded = self.__input_dropout(embedded)  # -> (batch_size, seq_len, embedding_dim)
 
-        packed = pack_padded_sequence(embedded, lens, enforce_sorted=False, batch_first=True)
+        packed = pack_padded_sequence(embedded, lens.cpu(), enforce_sorted=False, batch_first=True)
         _, (h_n, c_n) = self.__encoder(packed)
         # h_n.shape = (2, batch_size, hidden_size)
         # c_n.shape = (2, batch_size, hidden_size)

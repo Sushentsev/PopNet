@@ -2,13 +2,13 @@ from typing import Optional
 from torch import Tensor, nn
 
 from train.loss.base import Loss
-from train.preprocess.seq2seq.lang import PAD_TOKEN_IDX
+# from train.preprocess.seq2seq.lang import PAD_TOKEN_IDX
 
 
 class CrossEntropyLoss(Loss):
     def __init__(self,
                  weight: Optional[Tensor] = None,
-                 ignore_index: int = PAD_TOKEN_IDX,
+                 ignore_index: Optional[int] = None,
                  reduction: str = "mean"):
         super().__init__("CrossEntropyLoss", nn.CrossEntropyLoss(weight=weight, ignore_index=ignore_index))
         self.__reduction = reduction

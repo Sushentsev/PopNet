@@ -1,20 +1,17 @@
-from typing import List
-
-PAD_TOKEN_IDX = 0
-SOS_TOKEN_IDX = 1
-EOS_TOKEN_IDX = 2
-OOV_TOKEN_IDX = 3
+from typing import List, Optional
 
 
 class Lang:
-    def __init__(self):
-        self.__word2index = {}
-        self.__index2word = {PAD_TOKEN_IDX: "<pad>",
-                             SOS_TOKEN_IDX: "<sos>",
-                             EOS_TOKEN_IDX: "<eos>",
-                             OOV_TOKEN_IDX: "<oov>"}
+    def __init__(self, pad_token: str, sos_token: str, eos_token: str):
+        self.__pad_token = pad_token
+        self.__sos_token = sos_token
+        self.__eos_token = eos_token
+        self.__oov_token = "OOV"
+
+        self.__word2index = {pad_token: 0, sos_token: 1, eos_token: 2, self.__oov_token: 3}
+        self.__index2word = {index: word for word, index in self.__word2index.items()}
         self.__word2count = {}
-        self.__n_words = 4
+        self.__n_words = len(self.__word2index)
 
     def addWord(self, word: str):
         if word not in self.__word2index:
@@ -33,7 +30,7 @@ class Lang:
         if word in self.__word2index:
             return self.__word2index[word]
         else:
-            return OOV_TOKEN_IDX
+            return self.__word2index[self.__oov_token]
 
     def encodes(self, text: List[str]) -> List[int]:
         return [self.encode(word) for word in text]

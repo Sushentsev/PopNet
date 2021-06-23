@@ -53,7 +53,7 @@ class Decoder(nn.Module):
             input = torch.LongTensor([self.__sos_id] * batch_size).view(batch_size, 1).to(self.__device)
             max_len = self.__max_len
 
-        input = self.__input_dropout(self.__embedding(input)) # -> (batch_size, 1, embedding_dim)
+        input = self.__input_dropout(self.__embedding(input))  # -> (batch_size, 1, embedding_dim)
         outputs = torch.zeros(max_len, batch_size, self.__vocab_size).to(self.__device)
 
         for t in range(1, max_len):

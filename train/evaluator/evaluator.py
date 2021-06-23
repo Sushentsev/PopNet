@@ -1,7 +1,4 @@
-from logging import getLogger
-
 import torch
-from torch import nn
 
 from train.dataset.seq2seq_dataset import Seq2SeqDataset
 from train.loss.base import Loss
@@ -19,16 +16,16 @@ class Evaluator:
         model.eval()
 
         dev_loader = get_dataloader(dev_data, self.__batch_size, shuffle=False)
-        self.__loss.reset()
+        loss = self.__loss
+        loss.reset()
 
         with torch.no_grad():
             for batch in dev_loader:
                 src, src_lens, trg, trg_lens = [tensor.to(self.__device) for tensor in batch]
                 logits = model(src, src_lens, teacher_forcing_ratio=0.)  # -> (max_len, batch_size, vocab_size)
-
                 expected = trg.permute(1, 0)[1:].contiguous().view(-1)
                 actual = logits[1:trg.shape[1]].view(-1, logits.shape[2])
 
-                self.__loss.eval_batch(actual, expected)
+                loss.eval_batch(actual, expected)
 
-        return self.__loss.get_loss()
+        return loss.get_loss()
