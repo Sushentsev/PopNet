@@ -19,7 +19,7 @@ def configure_arg_parser() -> ArgumentParser:
 
 
 class GPTInference:
-    def __init__(self, model_path: str = MODEL_PATH, device: str = 'cpu'):
+    def __init__(self, model_path: str, device: str = 'cpu'):
         self.__model_path = model_path
         self.__device = torch.device(device)
 
