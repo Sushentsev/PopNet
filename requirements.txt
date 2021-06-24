@@ -7,3 +7,5 @@ numpy>=1.19.4
 spacy>=3.0.6
 pandas>=1.1.4
 omegaconf>=2.1.0
+wandb>=0.10.32
+transformers>=4.9.0.dev0

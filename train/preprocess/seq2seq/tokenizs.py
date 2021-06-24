@@ -1,9 +1,9 @@
 import spacy
+from transformers import GPT2Tokenizer
 from typing import List
 from spacy.tokens import Token
 from train.preprocess.seq2seq.lang import Lang
 from tqdm import tqdm
-
 
 
 class SpacyRuTokenizer:
@@ -45,35 +45,55 @@ class SpacyRuTokenizer:
         return self.__lang.vocab_size
 
     @property
-    def pad_index(self):
+    def pad_index(self) -> int:
         return self.__lang.encode(self.__pad_token)
 
     @property
-    def sos_index(self):
+    def sos_index(self) -> int:
         return self.__lang.encode(self.__sos_token)
 
     @property
-    def eos_index(self):
+    def eos_index(self) -> int:
         return self.__lang.encode(self.__eos_token)
 
 
-if __name__ == '__main__':
-    from utils import EOS, SOS, PAD
-    tokenizer = SpacyRuTokenizer(PAD, SOS, EOS)
-    corpus = [
-        "привет, что делаешь; я делаю пляски",
-        "мы любим, ! ;; f пить"
-    ]
+class SberRuGPTTokenizer:
+    def __init__(self, pad_token: str, sos_token: str, eos_token: str):
+        self.__pad_token = pad_token
+        self.__sos_token = sos_token
+        self.__eos_token = eos_token
 
-    tokenizer.build_vocab(corpus)
+        self.__tokenizer = GPT2Tokenizer.from_pretrained("sberbank-ai/rugpt3large_based_on_gpt2",
+                                                         pad_token=self.__pad_token,
+                                                         bos_token=self.__sos_token,
+                                                         eos_token=self.__eos_token)
 
-    import pickle
+    def encode(self, corpus: List[str], target: bool = False) -> List[List[int]]:
+        out = []
+        for text in tqdm(corpus):
+            coded = self.__tokenizer.encode(text)
+            if target:
+                coded = [self.sos_index] + coded + [self.eos_index]
 
-    with open("tokenizer.pkl", "wb") as file:
-        pickle.dump(tokenizer, file)
+            out.append(coded)
 
-    with open("tokenizer.pkl", "rb") as file:
-        tokenizer = pickle.load(file)
+        return out
 
-    print(tokenizer.encode(["5,"]))
-    print(tokenizer.decode([[1, 10, 11, 12, 13, 2]]))
+    def decode(self, corpus: List[List[int]]) -> List[str]:
+        return [self.__tokenizer.decode(text) for text in corpus]
+
+    @property
+    def vocab_size(self) -> int:
+        return self.__tokenizer.vocab_size + 3
+
+    @property
+    def pad_index(self) -> int:
+        return self.__tokenizer.pad_token_id
+
+    @property
+    def sos_index(self) -> int:
+        return self.__tokenizer.bos_token_id
+
+    @property
+    def eos_index(self) -> int:
+        return self.__tokenizer.eos_token_id

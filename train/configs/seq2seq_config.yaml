@@ -15,9 +15,10 @@ model:
 
 trainer:
   batch_size: 4
+  acc_steps: 16
   random_seed: 42
 
 train:
-  n_epochs: 50
-  teacher_forcing_ratio: 0.2
+  n_epochs: 5
+  teacher_forcing_ratio: 0.5
 
