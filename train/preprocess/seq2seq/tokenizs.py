@@ -74,16 +74,17 @@ class SberRuGPTTokenizer:
             coded = self.__tokenizer.encode(text)
             if target:
                 coded = [self.sos_index] + coded + [self.eos_index]
+
             out.append(coded)
 
-            return out
+        return out
 
     def decode(self, corpus: List[List[int]]) -> List[str]:
         return [self.__tokenizer.decode(text) for text in corpus]
 
     @property
     def vocab_size(self) -> int:
-        return self.__tokenizer.vocab_size
+        return self.__tokenizer.vocab_size + 3
 
     @property
     def pad_index(self) -> int:

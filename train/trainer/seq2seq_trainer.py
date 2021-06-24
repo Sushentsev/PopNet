@@ -64,7 +64,7 @@ class Seq2SeqTrainer:
                        n_epochs: int,
                        dev_data: Optional[Seq2SeqDataset] = None,
                        teacher_forcing_ratio: float = 0.):
-
+        save = True
         dataloader = get_dataloader(train_data, self.__batch_size, shuffle=True)
         step = 0
         accum_loss = 0.
@@ -91,6 +91,9 @@ class Seq2SeqTrainer:
                 self.__logger.info(f"Dev loss: {round(dev_loss, 4)}")
 
                 model.train()
+
+            if save:
+                torch.save(model.state_dict(), f"weight/s2s_epoch{epoch}")
 
     def train(self,
               model: Seq2Seq,

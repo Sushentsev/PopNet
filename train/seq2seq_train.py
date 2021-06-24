@@ -14,7 +14,7 @@ from train.loss.cross_entropy import CrossEntropyLoss
 from train.models.seq2seq.decoder import Decoder
 from train.models.seq2seq.encoder import Encoder
 from train.models.seq2seq.seq2seq_model import Seq2Seq
-from train.preprocess.seq2seq.tokenizs import SpacyRuTokenizer
+from train.preprocess.seq2seq.tokenizs import SpacyRuTokenizer, SberRuGPTTokenizer
 from train.trainer.seq2seq_trainer import Seq2SeqTrainer
 from utils import PAD, EOS, SOS
 
@@ -53,9 +53,6 @@ def remove_empty(src: List[List[int]], trg: List[List[int]]):
 def encode(tokenizer,
            train_src: List[str], train_trg: List[str],
            dev_src: List[str], dev_trg: List[str]):
-    print(f"Building vocab.")
-    tokenizer.build_vocab(train_src + train_trg)
-
     print(f"Encoding.")
     train_src_encoded = tokenizer.encode(train_src)
     train_trg_encoded = tokenizer.encode(train_trg, target=True)
@@ -80,7 +77,7 @@ def train(config_path: str):
 
     train_src, train_trg, dev_src, dev_trg = load_data(config.train_data, config.dev_data)
 
-    tokenizer = SpacyRuTokenizer(PAD, SOS, EOS)
+    tokenizer = SberRuGPTTokenizer(PAD, SOS, EOS)
     train_src, train_trg, dev_src, dev_trg = encode(tokenizer, train_src, train_trg, dev_src, dev_trg)
 
     max_song_len = max(max(map(len, train_trg)), max(map(len, dev_trg)))
@@ -97,7 +94,7 @@ def train(config_path: str):
                       device=DEVICE, **config.model.encoder)
 
     decoder = Decoder(vocab_size=tokenizer.vocab_size,
-                      sos_id=tokenizer.sos_index, eos_id=tokenizer.eos_index, padding_idx=tokenizer.pad_index,
+                      sos_id=tokenizer.sos_index, eos_id=tokenizer.eos_index, padding_idx=0,
                       max_len=max_song_len, device=DEVICE, **config.model.decoder)
 
     seq2seq = Seq2Seq(encoder, decoder, DEVICE).to(DEVICE)
