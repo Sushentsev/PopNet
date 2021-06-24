@@ -16,6 +16,7 @@ model:
 trainer:
   batch_size: 4
   acc_steps: 16
+  save_every: 16
   random_seed: 42
 
 train:
