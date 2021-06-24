@@ -112,5 +112,8 @@ configurations:
   out-seq-length: 256
   tg-token-name: 'token.txt'
 
+model_parallel_size: 1000
+loss_scale: None
+
 
 
