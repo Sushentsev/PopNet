@@ -64,7 +64,7 @@ train:
   cache-prefix: '_'
   finetune: False
   resume-dataloader: True
-  distributed-backend: 'nccl'
+  distributed_backend: 'nccl'
   local_rank: None
 
 validation:
