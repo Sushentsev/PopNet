@@ -7,7 +7,7 @@ from omegaconf import OmegaConf
 from train.models.seq2seq.decoder import Decoder
 from train.models.seq2seq.encoder import Encoder
 from train.models.seq2seq.seq2seq_model import Seq2Seq
-from train.preprocess.seq2seq.tokenizers import SpacyRuTokenizer
+from train.preprocess.seq2seq.tokenizs import SpacyRuTokenizer
 
 
 class Seq2SeqInference:
