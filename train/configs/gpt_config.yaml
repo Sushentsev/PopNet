@@ -1,121 +1,119 @@
-raw_data: 'data/gensongs/'
-train_data: 'train/preprocess/gpt_data/'
-device: 'cuda'
+preprocess:
+  raw_data: 'data/gensongs/'
+  train_data: 'train/preprocess/gpt_data/'
+  device: 'cuda'
 
 model:
   path: 'train/models/gpt'
-  attention-dropout: 0.1
-  num-attention-heads: 12
-  hidden-size: 768
-  intermediate-size: None
-  num-layers: 12
-  layernorm-epsilon: 1e-5
-  hidden-dropout: 0.1
-  max-position-embeddings: 2048
-  vocab-size: 30522
-  deep-init: False
-  make-vocab-size-divisible-by: 8
-  cpu-optimizer: False
-  cpu_torch_adam: False
-  sparse-mode: False
 
-fp16:
-  fp16: True
-  fp32-embedding: False
-  fp32-layernorm: False
-  fp32-tokentypes: False
-  fp32-allreduce: False
-  hysteresis: 2
-  loss-scale: None
-  loss-scale-window: 1000
-  min-scale: 1
+attention_dropout: 0.1
+num_attention_heads: 12
+hidden_size: 768
+intermediate_size: null
+num_layers: 12
+layernorm_epsilon: 1e-5
+hidden_dropout: 0.1
+max_position_embeddings: 2048
+vocab_size: 30522
+deep_init: False
+make_vocab_size_divisible-by: 8
+cpu_optimizer: False
+cpu_torch_adam: False
+sparse_mode: False
 
-train:
-  batch-size: 1
-  weight-decay: 0.01
-  checkpoint-activations: True
-  checkpoint-num-layers: 1
-  deepspeed-activation-checkpointing: True
-  clip-grad: 0.5
-  train-iters: 2000
-  log-interval: 100
-  logging-dir: "log"
-  exit-interval: None
-  seed: 1234
-  reset-position-ids: False
-  reset-attention-mask: False
-  lr-decay-iters: 3200
-  lr-decay-style: "cosine"
-  lr: 0.00015
-  min-lr: 1.0e-6
-  warmup: .004
-  save: model
-  save-interval: 1000
-  no-save-optim: False
-  no-save-rng: False
-  load: None
-  no-load-optim: False
-  log-memory: False
-  no-load-rng: False
-  load-huggingface: sberbank-ai/rugpt3small_based_on_gpt2
-  export-huggingface: None
-  huggingface-double-pos-embeddings: False
-  load-tag: ''
-  cache-prefix: '_'
-  finetune: False
-  resume-dataloader: True
-  distributed_backend: 'nccl'
-  local_rank: None
 
-validation:
-  eval-batch-size: None
-  eval-iters: 100
-  eval-interval: 1000
-  eval-seq-length: None
-  eval-max-preds-per-seq: None
-  overlapping-eval: 32
-  cloze-eval: False
-  eval-hf: False
-  load-openai: False
+fp16: True
+fp32_embedding: False
+fp32_layernorm: False
+fp32_tokentypes: False
+fp32_allreduce: False
+hysteresis: 2
+loss_scale: null
+loss_scale-window: 1000
+min_scale: 1
 
-data:
-  model-parallel-size: 1
-  shuffle: False
-  train-data: None
-  use-npy-data-loader: False
-  train-data-path: 'train.list'
-  val-data-path: ''
-  test-data-path: 'valid.list'
-  input-data-sizes-file: 'sizes.txt'
-  delim: ', '
-  text-key: 'sentence'
-  eval-text-key: None
-  valid-data: None
-  split: '1000,1,1'
-  test-data: None
-  overwrite-cache: False
-  lazy-loader: False
-  loose-json: False
-  presplit-sentences: False
-  num-workers: 2
-  tokenizer-path: None
-  cache-dir: None
-  use-tfrecords: False
-  seq-length: 2048
-  max-files-per-process: 100
-  max-preds-per-seq: None
+batch_size: 1
+weight_decay: 0.01
+checkpoint_activations: True
+checkpoint_num-layers: 1
+deepspeed_activation-checkpointing: True
+clip_grad: 0.5
+train_iters: 2000
+log_interval: 100
+logging_dir: "log"
+exit_interval: null
+seed: 1234
+reset_position-ids: False
+reset_attention-mask: False
+lr_decay_iters: 3200
+lr_decay_style: "cosine"
+lr: 0.00015
+min_lr: 1.0e-6
+warmup: .004
+save: model
+save_interval: 1000
+no_save_optim: False
+no_save_rng: False
+load: null
+no_load_optim: False
+log_memory: False
+no_load_rng: False
+load_huggingface: sberbank-ai/rugpt3small_based_on_gpt2
+export_huggingface: null
+huggingface_double_pos_embeddings: False
+load_tag: ''
+cache_prefix: '_'
+finetune: False
+resume_dataloader: True
+distributed_backend: 'nccl'
+local_rank: 0
 
-configurations:
-  temperature: 1.0
-  top_p: 0.0
-  top_k: 0
-  out-seq-length: 256
-  tg-token-name: 'token.txt'
+eval_batch_size: null
+eval_iters: 100
+eval_interval: 1000
+eval_seq_length: null
+eval_max_preds_per_seq: null
+overlapping_eval: 32
+cloze_eval: False
+eval_hf: False
+load_openai: False
 
 model_parallel_size: 1000
-loss_scale: None
+shuffle: False
+train_data: null
+use_npy_data_loader: False
+train_data_path: 'train.list'
+val_data_path: ''
+test_data_path: 'valid.list'
+input_data_sizes_file: 'sizes.txt'
+delim: ', '
+text_key: 'sentence'
+eval_text_key: null
+valid_data: null
+split: '1000,1,1'
+test_data: null
+overwrite_cache: False
+lazy_loader: False
+loose_json: False
+presplit_sentences: False
+num_workers: 2
+tokenizer_path: null
+cache_dir: null
+use_tfrecords: False
+seq_length: 2048
+max_files_per_process: 100
+max_preds_per_seq: null
+
+temperature: 1.0
+top_p: 0.0
+top_k: 0
+out-seq-length: 256
+tg-token-name: 'token.txt'
+
 deepspeed: True
 deepspeed_config: ru-gpts/src/deepspeed_config/gpt3_small_2048.json
-
-
-
+deepspeed_activation_checkpointing: True
+make_vocab_size_divisible_by: 8.
+checkpoint_num_layers: 1
+reset_position_ids: False
+reset_attention_mask: False
