@@ -116,7 +116,6 @@ model_parallel_size: 1000
 loss_scale: None
 deepspeed: True
 deepspeed_config: ru-gpts/src/deepspeed_config/gpt3_small_2048.json
-local_rank: 0
 
 
 
