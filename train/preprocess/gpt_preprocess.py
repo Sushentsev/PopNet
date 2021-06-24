@@ -51,5 +51,5 @@ if __name__ == "__main__":
 
     config = OmegaConf.load(__args.config)
 
-    preprocesser = GPTPreprocess(config.raw_data, config.train_data)
+    preprocesser = GPTPreprocess(config.preprocess.raw_data, config.preprocess.train_data)
     preprocesser.preprocess()
