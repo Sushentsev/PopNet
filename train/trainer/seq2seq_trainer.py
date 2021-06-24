@@ -22,7 +22,9 @@ def set_seed(seed: int):
 
 class Seq2SeqTrainer:
     def __init__(self, loss: Loss, batch_size: int, device,
-                 acc_steps: int = 1, random_seed: int = 42):
+                 acc_steps: int = 1,
+                 save_every: int = 16,
+                 random_seed: int = 42):
         self.__loss = loss
         self.__evaluator = Evaluator(loss, batch_size, device)
         self.__batch_size = batch_size
@@ -30,6 +32,7 @@ class Seq2SeqTrainer:
         self.__device = device
 
         self.__acc_steps = acc_steps
+        self.__save_every = save_every
         self.__random_seed = random_seed
 
         self.__logger = logging.getLogger(__file__)
@@ -84,6 +87,9 @@ class Seq2SeqTrainer:
                     wandb.log({"Train loss": accum_loss, "epoch": epoch})
                     accum_loss = 0.
 
+                if step % self.__save_every == 0:
+                    torch.save(model.state_dict(), f"./weight/seq2seq_epoch{epoch}_step{step}.pth")
+
             if dev_data is not None:
                 dev_loss = self.__evaluator.evaluate(model, dev_data)
 
@@ -91,9 +97,6 @@ class Seq2SeqTrainer:
                 self.__logger.info(f"Dev loss: {round(dev_loss, 4)}")
 
                 model.train()
-
-            if save:
-                torch.save(model.state_dict(), f"weight/s2s_epoch{epoch}")
 
     def train(self,
               model: Seq2Seq,
