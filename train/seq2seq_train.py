@@ -33,8 +33,11 @@ def load_data(train_path: str, dev_path: str):
 
     train_src = train_data["Title"].astype(str).tolist()
     train_trg = train_data["Lyrics"].astype(str).tolist()
+    train_trg = [trg.replace("\n", " ").replace("\u2005", " ") for trg in train_trg]
+
     dev_src = dev_data["Title"].astype(str).tolist()
     dev_trg = dev_data["Lyrics"].astype(str).tolist()
+    dev_trg = [trg.replace("\n", " ").replace("\u2005", " ") for trg in dev_trg]
 
     return train_src, train_trg, dev_src, dev_trg
 
@@ -61,19 +64,22 @@ def encode(tokenizer,
     dev_src_encoded = tokenizer.encode(dev_src)
     dev_trg_encoded = tokenizer.encode(dev_trg, target=True)
     dev_src_encoded, dev_trg_encoded = remove_empty(dev_src_encoded, dev_trg_encoded)
+    print([(trg[0], trg[-1]) for trg in dev_trg_encoded[:20]])
     return train_src_encoded, train_trg_encoded, dev_src_encoded, dev_trg_encoded
 
 
-def train(config_path: str):
-    logging.basicConfig(level=logging.INFO)
-
-    config = OmegaConf.load(config_path)
-
+def init_wandb(config):
     wandb.login()
     wandb.init(project="hse_dl_2021",
                notes="Seq2Seq architecture with encoder-decoder on LSTM",
                tags=["seq2seq", "lstm"],
                config=config)
+
+
+def train(config_path: str):
+    logging.basicConfig(level=logging.INFO)
+    config = OmegaConf.load(config_path)
+    init_wandb(config)
 
     train_src, train_trg, dev_src, dev_trg = load_data(config.train_data, config.dev_data)
 

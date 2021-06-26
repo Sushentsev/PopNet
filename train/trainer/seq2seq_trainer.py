@@ -47,6 +47,7 @@ class Seq2SeqTrainer:
 
         loss.reset()
 
+        # trg.shape = (batch_size, seq_len)
         expected = trg.permute(1, 0)[1:].contiguous().view(-1)
         actual = logits[1:].view(-1, logits.shape[2])
 
@@ -67,7 +68,6 @@ class Seq2SeqTrainer:
                        n_epochs: int,
                        dev_data: Optional[Seq2SeqDataset] = None,
                        teacher_forcing_ratio: float = 0.):
-        save = True
         dataloader = get_dataloader(train_data, self.__batch_size, shuffle=True)
         step = 0
         accum_loss = 0.

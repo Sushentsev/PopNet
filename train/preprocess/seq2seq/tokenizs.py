@@ -63,7 +63,7 @@ class SberRuGPTTokenizer:
         self.__sos_token = sos_token
         self.__eos_token = eos_token
 
-        self.__tokenizer = GPT2Tokenizer.from_pretrained("sberbank-ai/rugpt3large_based_on_gpt2",
+        self.__tokenizer = GPT2Tokenizer.from_pretrained("sberbank-ai/rugpt3small_based_on_gpt2",
                                                          pad_token=self.__pad_token,
                                                          bos_token=self.__sos_token,
                                                          eos_token=self.__eos_token)

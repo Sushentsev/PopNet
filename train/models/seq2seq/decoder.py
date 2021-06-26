@@ -45,6 +45,7 @@ class Decoder(nn.Module):
 
         batch_size = encoder_h.shape[0]
         hidden, cell = encoder_h.unsqueeze(0), encoder_c.unsqueeze(0)
+        # hidden.shape = cell.shape = (1, batch_size, hidden_size)
 
         if trg is not None:
             input = trg[:, 0].view(batch_size, 1)  # <sos> tokens
@@ -58,7 +59,7 @@ class Decoder(nn.Module):
 
         for t in range(1, max_len):
             output, (hidden, cell) = self.__decoder(input, (hidden, cell))
-            # output.shape = (batch_size, 1, hidden_size)
+            # output.shape =              (batch_size, 1, hidden_size)
             # hidden.shape = cell.shape = (1, batch_size, hidden_size)
             logits = self.__linear(output.squeeze(1))  # -> (batch_size, vocab_size)
             outputs[t] = logits

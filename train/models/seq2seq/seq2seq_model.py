@@ -26,5 +26,6 @@ class Seq2Seq(nn.Module):
         :return: logits, shape (trg_len, batch_size, vocab_size)
         """
         h_n, c_n = self.__encoder(src, src_lens)
-        outputs = self.__decoder(h_n, c_n, trg, trg_lens, teacher_forcing_ratio)
+        # h_n.shape = c_n.shape = (batch_size, 2 * hidden_size)
+        outputs = self.__decoder(h_n, c_n, trg, trg_lens, teacher_forcing_ratio)  # -> (trg_len, batch_size, vocab_size)
         return outputs

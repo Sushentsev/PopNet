@@ -23,8 +23,10 @@ class Evaluator:
             for batch in dev_loader:
                 src, src_lens, trg, trg_lens = [tensor.to(self.__device) for tensor in batch]
                 logits = model(src, src_lens, teacher_forcing_ratio=0.)  # -> (max_len, batch_size, vocab_size)
+                vocab_size = logits.shape[2]
+                # trg.shape = (batch_size, seq_len)
                 expected = trg.permute(1, 0)[1:].contiguous().view(-1)
-                actual = logits[1:trg.shape[1]].view(-1, logits.shape[2])
+                actual = logits[1:trg.shape[1]].view(-1, vocab_size)
 
                 loss.eval_batch(actual, expected)
 

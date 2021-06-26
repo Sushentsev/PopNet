@@ -53,5 +53,4 @@ class Encoder(nn.Module):
 
         h_n_cat = torch.cat((h_n_forward, h_n_backward), dim=1)  # -> (batch_size, 2 * hidden_size)
         c_n_cat = torch.cat((c_n_forward, c_n_backward), dim=1)  # -> (batch_size, 2 * hidden_size)
-
         return h_n_cat, c_n_cat
